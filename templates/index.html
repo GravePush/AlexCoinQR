@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Добро пожаловать в наш Telegram чат!</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Open+Sans&display=swap');
+
+    body, html {
+      margin: 0; padding: 0; height: 100%;
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #0052D4, #4364F7, #6FB1FC);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 420px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+      user-select: none;
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+      text-shadow: 0 0 8px rgba(0,0,0,0.4);
+    }
+
+    p.lead {
+      font-size: 1.15rem;
+      margin-bottom: 30px;
+      line-height: 1.4;
+      text-shadow: 0 0 4px rgba(0,0,0,0.3);
+    }
+
+    .benefits {
+      text-align: left;
+      margin-bottom: 32px;
+      font-size: 1rem;
+      line-height: 1.5;
+      list-style: none;
+      padding-left: 0;
+    }
+    .benefits li {
+      margin-bottom: 12px;
+      padding-left: 24px;
+      position: relative;
+    }
+    .benefits li::before {
+      content: '✔';
+      position: absolute;
+      left: 0;
+      color: #4caf50;
+      font-weight: bold;
+      font-size: 1.2rem;
+      top: 2px;
+    }
+
+    .telegram-login {
+      margin-top: 10px;
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Присоединяйтесь к нашему Telegram-чату!</h1>
+    <p class="lead">
+      Сканируйте QR, заходите и будьте в курсе важных новостей, полезных советов и эксклюзивных предложений. Мы ценим каждого участника!
+    </p>
+    <ul class="benefits">
+      <li>Удобный и быстрый способ общения</li>
+      <li>Эксклюзивные обновления и новости</li>
+      <li>Поддержка и помощь в любое время</li>
+    </ul>
+
+    <div class="telegram-login">
+      <!-- Telegram Login Widget -->
+      <script async src="https://telegram.org/js/telegram-widget.js?22"
+              data-telegram-login="alexcoinauth_bot"
+              data-size="large"
+              data-userpic="false"
+              data-auth-url="https://floppy-fans-lie.loca.lt/auth/telegram?ref_code={{ ref_code }}"
+              data-request-access="write">
+      </script>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get("ref_code");
+
+    window.TelegramLoginWidget = {
+      onAuth: function(user) {
+        const data = {
+          id: user.id,
+          first_name: user.first_name || '',
+          last_name: user.last_name || '',
+          username: user.username || '',
+          photo_url: user.photo_url || '',
+          auth_date: user.auth_date,
+          hash: user.hash,
+          ref_code: refCode || ''
+        };
+
+        const formBody = Object.entries(data)
+          .map(([k,v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
+          .join('&');
+
+        fetch('/auth/telegram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formBody
+        }).then(res => {
+          if (res.redirected) {
+            window.location.href = res.url;
+          } else {
+            res.text().then(text => alert('Ошибка: ' + text));
+          }
+        });
+      }
+    };
+  </script>
+</body>
+</html>
