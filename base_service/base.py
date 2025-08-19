@@ -1,4 +1,4 @@
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import select, insert, update, delete, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_db
@@ -9,7 +9,7 @@ class BaseService:
 
     @classmethod
     async def get_all(cls, session: AsyncSession, **data):
-        query = select(cls.model).filter_by(**data)
+        query = select(cls.model).filter_by(**data).order_by(desc(cls.model.created_at))
         result = await session.execute(query)
         return result.scalars().all()
 

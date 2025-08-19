@@ -1,4 +1,7 @@
+from aiogram import types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+from config import ADMIN_IDS
 
 main_user_inline_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
@@ -7,6 +10,9 @@ main_user_inline_keyboard = InlineKeyboardMarkup(
         ],
         [
             InlineKeyboardButton(text="🆔 Мой Telegram ID", callback_data="myid")
+        ],
+        [
+            InlineKeyboardButton(text="🤖 Новый QR-код", callback_data="qr")
         ]
     ]
 )
@@ -35,6 +41,5 @@ welcome_keyboard = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="🚀 Начать", callback_data="start_bot")]
     ]
 )
-
 
 
